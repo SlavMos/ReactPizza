@@ -1,9 +1,6 @@
-  
-@import './variables.scss';
-@import './libs/normalize.scss';
-
-@import './components/all.scss'; 
-
+@import "./variables";
+@import "./libs/normalize.scss";
+@import "../components/all";
 body {
   background-color: $background;
 }
@@ -17,7 +14,7 @@ body {
   max-width: 1400px;
 }
 
-.content {  
+.content {
   padding: 40px 0;
 
   &__title {
