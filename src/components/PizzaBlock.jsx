@@ -1,37 +1,43 @@
 import React from "react";
 
-const PizzaBlock = (props) => {
-  const [pizzaCount, setPizzaCount] = React.useState(0); //[СОСТОЯНИЕ,ФУНКЦИЯ КОТОРАЯ БУДЕТ МЕНЯТЬ ЗНАЧЕНИЕ]
+const PizzaBlock = ({ title, sizes, imageUrl, price, types }) => {
+  // const [pizzaCount, setPizzaCount] = React.useState(0); //[СОСТОЯНИЕ,ФУНКЦИЯ КОТОРАЯ БУДЕТ МЕНЯТЬ ЗНАЧЕНИЕ]
 
-  const OnClickPlus = () => {
-    setPizzaCount(pizzaCount + 1);
-  };
+  // const OnClickPlus = () => {
+  //   setPizzaCount(pizzaCount + 1);
+  // };
+  const [activeType, setActiveType] = React.useState(0);
+  const [activeSize, setActiveSize] = React.useState(0);
 
   return (
     <div className="pizza-block">
-      <img
-        className="pizza-block__image"
-        src="https://dodopizza-a.akamaihd.net/static/Img/Products/Pizza/ru-RU/b750f576-4a83-48e6-a283-5a8efb68c35d.jpg"
-        alt="Pizza"
-      />
-      <h4 className="pizza-block__title">{props.title}</h4>
+      <img className="pizza-block__image" src={imageUrl} alt="Pizza" />
+      <h4 className="pizza-block__title">{title}</h4>
       <div className="pizza-block__selector">
         <ul>
-          <li className="active">тонкое</li>
-          <li>традиционное</li>
+          {types.map((types, index) => (
+            <li
+              onClick={() => setActiveType(index)}
+              className={activeType === index ? "active" : ""}
+            >
+              {types === 0 ? "тонкое" : "традиционное"}
+            </li>
+          ))}
         </ul>
         <ul>
-          <li className="active">26 см.</li>
-          <li>30 см.</li>
-          <li>40 см.</li>
+          {sizes.map((obj, index) => (
+            <li
+              onClick={() => setActiveSize(index)}
+              className={activeSize === index ? "active" : ""}
+            >
+              {obj} см.
+            </li>
+          ))}
         </ul>
       </div>
       <div className="pizza-block__bottom">
-        <div className="pizza-block__price"> от {props.price} руб</div>
-        <button
-          onClick={OnClickPlus}
-          className="button button--outline button--add"
-        >
+        <div className="pizza-block__price"> от {price} руб</div>
+        <button className="button button--outline button--add">
           <svg
             width="12"
             height="12"
@@ -45,7 +51,7 @@ const PizzaBlock = (props) => {
             />
           </svg>
           <span>Добавить</span>
-          <i>{pizzaCount}</i>
+          <i>0</i>
         </button>
       </div>
     </div>

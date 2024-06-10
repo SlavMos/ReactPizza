@@ -4,6 +4,8 @@ import PizzaBlock from "./components/PizzaBlock.jsx";
 import Sort from "./components/Sort.jsx";
 import "./scss/app.scss";
 import React from "react";
+import pizzas from "./components/assets/pizzas.json";
+console.log(pizzas);
 
 function App() {
   return (
@@ -17,15 +19,9 @@ function App() {
           </div>
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">
-            <PizzaBlock title="Мексиканское" price={500} />
-            <PizzaBlock title="Итальянское" price="300" />
-            <PizzaBlock title="Итальянское" price="300" />
-            <PizzaBlock title="Итальянское" price="300" />
-            <PizzaBlock title="Итальянское" price="300" />
-            <PizzaBlock title="Итальянское" price="300" />
-            <PizzaBlock title="Итальянское" price="300" />
-            <PizzaBlock title="Итальянское" price="300" />
-            <PizzaBlock title="Итальянское" price="300" />
+            {pizzas.map((obj) => (
+              <PizzaBlock {...obj} />
+            ))}
           </div>
         </div>
       </div>

@@ -14,8 +14,6 @@ const Categories = () => {
     "Гриль",
     "Острые",
     "Закрытые",
-
-    "fsdsdf",
   ];
 
   return (
