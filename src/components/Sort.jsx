@@ -1,6 +1,12 @@
 import React from "react";
 
 const Sort = () => {
+  const [open, setOpen] = React.useState(false);
+
+  const openClick = () => {
+    setOpen(!open); // for open and close popup
+  };
+
   return (
     <div className="sort">
       <div className="sort__label">
@@ -17,15 +23,17 @@ const Sort = () => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span>популярности</span>
+        <span onClick={openClick}>популярности</span>
       </div>
-      <div className="sort__popup">
-        <ul>
-          <li className="active">популярности</li>
-          <li>цене</li>
-          <li>алфавиту</li>
-        </ul>
-      </div>
+      {open && ( // if open true
+        <div className="sort__popup">
+          <ul>
+            <li className="active">популярности</li>
+            <li>цене</li>
+            <li>алфавиту</li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

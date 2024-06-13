@@ -6,6 +6,7 @@ const PizzaBlock = ({ title, sizes, imageUrl, price, types }) => {
   // const OnClickPlus = () => {
   //   setPizzaCount(pizzaCount + 1);
   // };
+
   const [activeType, setActiveType] = React.useState(0);
   const [activeSize, setActiveSize] = React.useState(0);
 
@@ -17,6 +18,7 @@ const PizzaBlock = ({ title, sizes, imageUrl, price, types }) => {
         <ul>
           {types.map((types, index) => (
             <li
+              key={types}
               onClick={() => setActiveType(index)}
               className={activeType === index ? "active" : ""}
             >
@@ -27,6 +29,7 @@ const PizzaBlock = ({ title, sizes, imageUrl, price, types }) => {
         <ul>
           {sizes.map((obj, index) => (
             <li
+              key={obj}
               onClick={() => setActiveSize(index)}
               className={activeSize === index ? "active" : ""}
             >
