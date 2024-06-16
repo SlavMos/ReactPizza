@@ -1,13 +1,14 @@
 import Categories from "./components/Categories.jsx";
 import Header from "./components/Header.jsx";
-import PizzaBlock from "./components/PizzaBlock.jsx";
+import PizzaBlock from "./components/PizzaBlock";
+import Skeleton from "./components/PizzaBlock/Skeleton.jsx";
 import Sort from "./components/Sort.jsx";
 import "./scss/app.scss";
 import React from "react";
-import pizzas from "./components/assets/pizzas.json";
 
 function App() {
   const [items, setItems] = React.useState([]); // для fetch запроса
+  const [isLoading, setIsLoading] = React.useState(true); //for skeleton
 
   React.useEffect(() => {
     fetch("https://666c15f449dbc5d7145c8874.mockapi.io/items") //когда будет fetch запрос
@@ -17,9 +18,10 @@ function App() {
       })
       .then((json) => {
         //тогда верни данные в setItems
-        setItems(json);
+        setItems(json); // передаем в json в  setItems
+        setIsLoading(false);
       });
-  }, []); // чтоб вызвался один раз(componentDidMount)
+  }, []); // чтобы вызвался один раз(componentDidMount)
 
   return (
     <div className="wrapper">
@@ -32,9 +34,9 @@ function App() {
           </div>
           <h2 className="content__title">Все пиццы</h2>
           <div className="content__items">
-            {items.map((obj) => (
-              <PizzaBlock key={obj.id} {...obj} />
-            ))}
+            {isLoading
+              ? [...new Array(8)].map((_, index) => <Skeleton key={index} />)
+              : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
           </div>
         </div>
       </div>
