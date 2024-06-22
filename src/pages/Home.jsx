@@ -19,6 +19,7 @@ export const Home = () => {
         setItems(json); // передаем в json в  setItems
         setIsLoading(false);
       });
+    window.scrollTo(0, 0); // делает скрол вверх после рендера
   }, []); // чтобы вызвался один раз(componentDidMount)
 
   return (
