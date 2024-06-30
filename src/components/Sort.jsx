@@ -1,18 +1,21 @@
 import React from "react";
 
-const Sort = () => {
+const Sort = (props) => {
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState(0);
+
   const openClick = () => {
     setOpen(!open); // for open and close popup
   };
-  const popupList = ["Популярности", "цене", "алфавиту"]; // for popup List(click)
-  const sortName = popupList[selected]; // после выбора попап листа остается то значение которое выбрали
-  const onClickListItem = (index) => {
-    setSelected(index);
+  const popupList = [
+    { name: "Популярности", sort: "rating" },
+    { name: "Цене", sort: "price" },
+    { name: "Алфавиту ", sort: "title" },
+  ]; // for popup List(click)
+  // const sortName = popupList[props.sortValue].name; // после выбора попап листа остается то значение которое выбрали
+  const onClickItem = (i) => {
+    props.onChangeSort(i);
     setOpen(false); // закрывает попап после выбора
   };
-
   return (
     <div className="sort">
       <div className="sort__label">
@@ -29,18 +32,20 @@ const Sort = () => {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={openClick}>{sortName}</span>
+        <span onClick={openClick}>{props.sortValue.name}</span>
       </div>
       {open && ( // if open true ->{div}
         <div className="sort__popup">
           <ul>
-            {popupList.map((name, index) => (
+            {popupList.map((obj, index) => (
               <li
                 key={index}
-                className={selected === index ? "active" : ""} //переключение по попапу
-                onClick={() => onClickListItem(index)}
+                className={props.sortValue.sort === obj.sort ? "active" : ""} //переключение по попапу
+                onClick={() => {
+                  onClickItem(obj);
+                }}
               >
-                {name}
+                {obj.name}
               </li>
             ))}
           </ul>

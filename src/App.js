@@ -1,3 +1,4 @@
+import Categories from "./components/Categories.jsx";
 import Header from "./components/Header.jsx";
 import Card from "./pages/Card.jsx";
 import Home from "./pages/Home.jsx";
@@ -13,7 +14,8 @@ function App() {
       <div className="content">
         <div className="container">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home />} />{" "}
+            {/*  '/'корневая страница  приложения */}
             <Route path="/card" element={<Card />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
