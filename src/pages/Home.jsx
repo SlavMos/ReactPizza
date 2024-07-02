@@ -10,14 +10,14 @@ export const Home = () => {
   const [category, setCategory] = React.useState(0); //что бы фильтровать по категориям(передаем через пропсы  категориям)
   const [sort, setSort] = React.useState({
     name: "Популярности",
-    sort: "rating",
+    sort: "name",
   }); // что бы сортировать по категориям(так же как до этого)
   React.useEffect(() => {
     setIsLoading(true); //что бы переключения категорий появился скелетон
     fetch(
       `https://666c15f449dbc5d7145c8874.mockapi.io/items?${
         category > 0 ? `category=${category}` : ""
-      }&sortBy=${sort.sort}&order=desc `
+      }&sortBy=${sort.sort}&order=desc`
     ) //когда будет fetch запрос
       .then((res) => {
         // тогда перекомвертируй в json формат

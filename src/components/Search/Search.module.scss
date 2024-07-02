@@ -1,0 +1,25 @@
+.input {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  border-radius: 10px;
+  color: #fe5f1e;
+  border-color: #181818;
+  width: 250px;
+  height: 50px;
+  font-size: 18px;
+  display: block;
+}
+.search {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+  position: absolute;
+  left: 4px;
+  top: 17px;
+}
