@@ -8,9 +8,12 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
+  const [searchValue, setSearchValue] = React.useState("");
+  console.log(searchValue, "input changes");
+
   return (
     <div className="wrapper">
-      <Header />
+      <Header searchValue={searchValue} setSearchValue={setSearchValue} />
       <div className="content">
         <div className="container">
           <Routes>

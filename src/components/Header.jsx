@@ -2,7 +2,7 @@ import React from "react";
 import logoSvg from "./assets/img/image 1.svg";
 import { Link } from "react-router-dom";
 import Search from "./Search/Search";
-const Header = () => {
+const Header = (props) => {
   return (
     <div className="header">
       <div className="container">
@@ -16,7 +16,11 @@ const Header = () => {
             </div>
           </div>
         </Link>
-        <Search />
+        {/* // ПОИСК */}
+        <Search
+          searchValue={props.searchValue}
+          setSearchValue={props.setSearchValue}
+        />
         <div className="header__cart">
           <Link to="/card" className="button button--cart">
             <span>520 ₽</span>
