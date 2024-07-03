@@ -4,7 +4,7 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import Categories from "../components/Categories";
 import Sort from "../components/Sort";
 
-export const Home = () => {
+export const Home = (props) => {
   const [items, setItems] = React.useState([]); // для fetch запроса
   const [isLoading, setIsLoading] = React.useState(true); //for skeleton
   const [category, setCategory] = React.useState(0); //что бы фильтровать по категориям(передаем через пропсы  категориям)
@@ -31,6 +31,15 @@ export const Home = () => {
     window.scrollTo(0, 0); // делает скрол вверх после рендера
   }, [category, sort]); // чтобы вызвался один раз(componentDidMount),но так как бы добавили категории будет менятся и показывать категории
 
+  const pizzas = items //поиск по объектам
+    .filter((obj) => {
+      if (obj.title.toLowerCase().includes(props.searchValue.toLowerCase())) {
+        return true;
+      }
+      return false;
+    })
+    .map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+
   return (
     <>
       <div className="content__top">
@@ -42,7 +51,7 @@ export const Home = () => {
       <div className="content__items">
         {isLoading
           ? [...new Array(8)].map((_, index) => <Skeleton key={index} />)
-          : items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)}
+          : pizzas}
       </div>
     </>
   );

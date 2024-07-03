@@ -19,13 +19,13 @@ export const Search = (props) => {
         />
       </svg>
       <input
-        value={props.searchValue}
+        value={props.searchValue} // что бы инпут был отслеживаюший
         onChange={(event) => props.setSearchValue(event.target.value)} // отслеживаю  event(то что юудет написано в инпут) и передаю в UseState
         className={s.input}
         type="text"
         placeholder="Search..."
       />
-      {props.searchValue && ( // ЕСЛИ В SEARCHVALUE ЧТО ТО БУДЕТ НАПИСАНО ТОГДА БУДЕТ ПОКАЗЫВАТЬ ИКОНКА CLEAR
+      {props.searchValue && ( // if searchvalue===true ЕСЛИ В SEARCHVALUE ЧТО ТО БУДЕТ НАПИСАНО ТОГДА БУДЕТ ПОКАЗЫВАТЬ ИКОНКА CLEAR
         <svg
           onClick={() => props.setSearchValue("")} //  при нажатим на иконко она очистивается
           className={s.clear}

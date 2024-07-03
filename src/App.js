@@ -17,7 +17,7 @@ function App() {
       <div className="content">
         <div className="container">
           <Routes>
-            <Route path="/" element={<Home />} />{" "}
+            <Route path="/" element={<Home searchValue={searchValue} />} />{" "}
             {/*  '/'корневая страница  приложения */}
             <Route path="/card" element={<Card />} />
             <Route path="*" element={<NotFound />} />
