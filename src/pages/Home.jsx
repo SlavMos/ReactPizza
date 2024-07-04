@@ -6,52 +6,69 @@ import Sort from "../components/Sort";
 
 export const Home = (props) => {
   const [items, setItems] = React.useState([]); // для fetch запроса
-  const [isLoading, setIsLoading] = React.useState(true); //for skeleton
-  const [category, setCategory] = React.useState(0); //что бы фильтровать по категориям(передаем через пропсы  категориям)
+  const [isLoading, setIsLoading] = React.useState(true); // for skeleton
+  const [category, setCategory] = React.useState(0); // чтобы фильтровать по категориям
   const [sort, setSort] = React.useState({
     name: "Популярности",
     sort: "name",
-  }); // что бы сортировать по категориям(так же как до этого)
+  }); // чтобы сортировать по категориям
+  const [errorMessage, setErrorMessage] = React.useState(""); // для сообщений об ошибках
+
   React.useEffect(() => {
-    setIsLoading(true); //что бы переключения категорий появился скелетон
+    setIsLoading(true); // чтобы при переключении категорий появился скелетон
+    setErrorMessage(""); // сбросить сообщение об ошибке
+
     fetch(
       `https://666c15f449dbc5d7145c8874.mockapi.io/items?${
         category > 0 ? `category=${category}` : ""
-      }&sortBy=${sort.sort}&order=desc`
-    ) //когда будет fetch запрос
+      }&sortBy=${sort.sort}&order=desc${
+        props.searchValue ? `&title=${props.searchValue}` : ""
+      }`
+    )
       .then((res) => {
-        // тогда перекомвертируй в json формат
+        if (!res.ok) {
+          //ПРОВЕРКА ДАННЫХ ДЛЯ ВЫВОДА ОШИБКИ
+          throw new Error("Ошибка сети");
+        }
         return res.json();
       })
       .then((json) => {
-        //тогда верни данные в setItems
-        setItems(json); // передаем в json в  setItems
-        setIsLoading(false);
+        if (Array.isArray(json) && json.length > 0) {
+          setItems(json); // если данные есть, устанавливаем их
+        } else {
+          setItems([]); // если данных нет, устанавливаем пустой массив
+          setErrorMessage("Пицца не найдена."); // показываем сообщение об отсутствии данных
+        }
+        setIsLoading(false); //когда массив пицц показался убираем скелетон
+      })
+      .catch((error) => {
+        setErrorMessage("Произошла ошибка при загрузке данных."); // показываем сообщение об ошибке
+        setIsLoading(false); // скрываем скелетон
       });
-    window.scrollTo(0, 0); // делает скрол вверх после рендера
-  }, [category, sort]); // чтобы вызвался один раз(componentDidMount),но так как бы добавили категории будет менятся и показывать категории
 
-  const pizzas = items //поиск по объектам
-    .filter((obj) => {
-      if (obj.title.toLowerCase().includes(props.searchValue.toLowerCase())) {
-        return true;
-      }
-      return false;
-    })
-    .map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+    window.scrollTo(0, 0); // делает скрол вверх после рендера
+  }, [category, sort, props.searchValue]); // зависимости, которые вызывают повторный запрос при изменении
+
+  const pizzas = Array.isArray(items)
+    ? items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)
+    : [];
 
   return (
     <>
       <div className="content__top">
         <Categories value={category} onClickCategory={(i) => setCategory(i)} />{" "}
-        {/* // для изменения категорий */}
+        {/* для изменения категорий */}
         <Sort sortValue={sort} onChangeSort={(i) => setSort(i)} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">
-        {isLoading
-          ? [...new Array(8)].map((_, index) => <Skeleton key={index} />)
-          : pizzas}
+        {isLoading ? (
+          [...new Array(8)].map((_, index) => <Skeleton key={index} />) // отображаем скелетоны
+        ) : errorMessage ? (
+          <div>{errorMessage}</div>
+        ) : (
+          pizzas
+        )}
       </div>
     </>
   );
