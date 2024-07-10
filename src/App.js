@@ -20,7 +20,8 @@ function App() {
             <Route path="/" element={<Home searchValue={searchValue} />} />{" "}
             {/*  '/'корневая страница  приложения */}
             <Route path="/card" element={<Card />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<NotFound />} />{" "}
+            {/* Определяет маршрут для всех остальных несуществующих страниц (*), который отображает компонент NotFound. */}
           </Routes>
         </div>
       </div>
