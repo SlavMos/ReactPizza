@@ -1,7 +1,10 @@
 import React from "react";
 import s from "./Search.module.scss";
+import { SearchContext } from "../../App";
 
 export const Search = (props) => {
+  const { searchValue, setSearchValue } = React.useContext(SearchContext);
+
   return (
     <div className={s.search}>
       <svg
@@ -19,15 +22,15 @@ export const Search = (props) => {
         />
       </svg>
       <input
-        value={props.searchValue} // что бы инпут был отслеживаюший
-        onChange={(event) => props.setSearchValue(event.target.value)} // отслеживаю  event(то что юудет написано в инпут) и передаю в UseState
+        value={searchValue} // что бы инпут был отслеживаюший
+        onChange={(event) => setSearchValue(event.target.value)} // отслеживаю  event(то что юудет написано в инпут) и передаю в UseState
         className={s.input}
         type="text"
         placeholder="Search..."
       />
-      {props.searchValue && ( // if searchvalue===true ЕСЛИ В SEARCHVALUE ЧТО ТО БУДЕТ НАПИСАНО ТОГДА БУДЕТ ПОКАЗЫВАТЬ ИКОНКА CLEAR
+      {searchValue && ( // if searchvalue===true ЕСЛИ В SEARCHVALUE ЧТО ТО БУДЕТ НАПИСАНО ТОГДА БУДЕТ ПОКАЗЫВАТЬ ИКОНКА CLEAR
         <svg
-          onClick={() => props.setSearchValue("")} //  при нажатим на иконко она очистивается
+          onClick={() => setSearchValue("")} //  при нажатим на иконко она очистивается
           className={s.clear}
           version="1.1"
           id="Layer_1"

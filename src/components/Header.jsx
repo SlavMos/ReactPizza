@@ -17,10 +17,7 @@ const Header = (props) => {
           </div>
         </Link>
         {/* // ПОИСК */}
-        <Search
-          searchValue={props.searchValue}
-          setSearchValue={props.setSearchValue}
-        />
+        <Search />
         <div className="header__cart">
           <Link to="/card" className="button button--cart">
             <span>520 ₽</span>

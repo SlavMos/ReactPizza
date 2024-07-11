@@ -7,24 +7,27 @@ import "./scss/app.scss";
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
+export const SearchContext = React.createContext();
+
 function App() {
   const [searchValue, setSearchValue] = React.useState("");
-  console.log(searchValue, "input changes");
 
   return (
     <div className="wrapper">
-      <Header searchValue={searchValue} setSearchValue={setSearchValue} />
-      <div className="content">
-        <div className="container">
-          <Routes>
-            <Route path="/" element={<Home searchValue={searchValue} />} />{" "}
-            {/*  '/'корневая страница  приложения */}
-            <Route path="/card" element={<Card />} />
-            <Route path="*" element={<NotFound />} />{" "}
-            {/* Определяет маршрут для всех остальных несуществующих страниц (*), который отображает компонент NotFound. */}
-          </Routes>
+      <SearchContext.Provider value={{ searchValue, setSearchValue }}>
+        <Header />
+        <div className="content">
+          <div className="container">
+            <Routes>
+              <Route path="/" element={<Home searchValue={searchValue} />} />{" "}
+              {/*  '/'корневая страница  приложения */}
+              <Route path="/card" element={<Card />} />
+              <Route path="*" element={<NotFound />} />{" "}
+              {/* Определяет маршрут для всех остальных несуществующих страниц (*), который отображает компонент NotFound. */}
+            </Routes>
+          </div>
         </div>
-      </div>
+      </SearchContext.Provider>
     </div>
   );
 }
