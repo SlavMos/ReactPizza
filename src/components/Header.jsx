@@ -19,7 +19,7 @@ const Header = (props) => {
         {/* // ПОИСК */}
         <Search />
         <div className="header__cart">
-          <Link to="/card" className="button button--cart">
+          <Link to="/Card" className="button button--cart">
             <span>520 ₽</span>
             <div className="button__delimiter"></div>
             <svg

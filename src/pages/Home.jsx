@@ -4,9 +4,10 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import Categories from "../components/Categories";
 import Sort from "../components/Sort";
 import Pagination from "../components/Pagination/Pagination";
-import ReactPaginate from "react-paginate";
+import { SearchContext } from "../App";
 
-export const Home = (props) => {
+export const Home = () => {
+  const { searchValue } = React.useContext(SearchContext);
   const [items, setItems] = React.useState([]); // для fetch запроса
   const [isLoading, setIsLoading] = React.useState(true); // for skeleton
   const [category, setCategory] = React.useState(0); // чтобы фильтровать по категориям
@@ -25,7 +26,7 @@ export const Home = (props) => {
       `https://666c15f449dbc5d7145c8874.mockapi.io/items?page=${currentPage}&limit=4&${
         category > 0 ? `category=${category}` : ""
       }&sortBy=${sort.sort}&order=desc${
-        props.searchValue ? `&title=${props.searchValue}` : ""
+        searchValue ? `&title=${searchValue}` : ""
       }`
     )
       .then((res) => {
@@ -50,7 +51,7 @@ export const Home = (props) => {
       });
 
     window.scrollTo(0, 0); // делает скрол вверх после рендера
-  }, [category, sort, props.searchValue, currentPage]); // зависимости, которые вызывают повторный запрос при изменении
+  }, [category, sort, searchValue, currentPage]); // зависимости, которые вызывают повторный запрос при изменении
 
   const pizzas = Array.isArray(items)
     ? items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)
@@ -68,7 +69,7 @@ export const Home = (props) => {
         {isLoading ? (
           [...new Array(8)].map((_, index) => <Skeleton key={index} />) // отображаем скелетоны
         ) : errorMessage ? (
-          <div>{errorMessage}</div>
+          <div className="error__message">{errorMessage}</div>
         ) : (
           pizzas
         )}
