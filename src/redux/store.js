@@ -1,8 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "./slices/filterSlice"; // убедитесь, что импортируете редуктор правильно
-
+import filter from "./slices/filterSlice";
 export const store = configureStore({
   reducer: {
-    counter: counterReducer, // используйте корректное имя редуктора
+    filter, //добавили наш slice  в хранилище редакс
   },
 });

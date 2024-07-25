@@ -1,30 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  // начальное  состояние такое же как  в  React.useState("")
-  value: 0,
+  categoryId: 0, //начальное состояние категорий
+  sort: {
+    name: "Популярности", //начальное состояние сортировки
+    sort: "name",
+  },
 };
 
-export const counterSlice = createSlice({
-  name: "counter",
-  initialState: initialState, // начальное  состояние такое же как  в  React.useState("")
+const filterSlice = createSlice({
+  // Slise-часть(хранилище) (тут будет храниться логика обраюотки нашего state)
+  name: "filter",
+  initialState,
   reducers: {
-    increment: (state) => {
-      // ACTION INCREMENT ПРОСТО МЫ НЕ ПИШЕМ(ACTION рядом)
-      state.value += 1;
-    },
-    decrement: (state) => {
-      // ACTION DECREMENT
-      state.value -= 1;
-    },
-    incrementByAmount: (state, action) => {
-      state.value += action.payload;
+    setCategoryId(state, action) {
+      state.categoryId = action.payload;
     },
   },
 });
 
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
-
-export default counterSlice.reducer;
-
-//ACTION-КОМАНДА
+export const { setCategoryId } = filterSlice.actions;
+export default filterSlice.reducer;
