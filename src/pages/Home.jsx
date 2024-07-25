@@ -6,27 +6,28 @@ import Sort from "../components/Sort";
 import Pagination from "../components/Pagination/Pagination";
 import { SearchContext } from "../App";
 import { useSelector, useDispatch } from "react-redux";
-import { setCategoryId } from "../redux/slices/filterSlice";
+import { setCategoryId, setSort } from "../redux/slices/filterSlice";
 
 export const Home = () => {
   const categoryId = useSelector((state) => state.filter.categoryId); // берем из данных то что нам надо
-
+  const sortType = useSelector((state) => state.filter.sort);
   const dispatch = useDispatch();
 
   const { searchValue } = React.useContext(SearchContext);
   const [items, setItems] = React.useState([]); // для fetch запроса
   const [isLoading, setIsLoading] = React.useState(true); // for skeleton
   // const [category, setCategory] = React.useState(0); // чтобы фильтровать по категориям
-  const [currentPage, setCurrentPage] = React.useState(1); // для погинации(1.2.3)
-  const [sort, setSort] = React.useState({
-    name: "Популярности",
-    sort: "name",
-  }); // чтобы сортировать по категориям
+  const [currentPage, setCurrentPage] = React.useState(1); // для погинации(1.2.3) // чтобы сортировать по категориям
   const [errorMessage, setErrorMessage] = React.useState(""); // для сообщений об ошибках
 
+  //DISPATCHIM TUT =)
   const onClickCategory = (id) => {
     //СОЗДАЛИ ФУНКЦИЮ КОТОРАЯ ПРИНИМАЕТ IDCATEGORY(ПЕРЕДАЛИ КОМПОНЕНТУ КАТЕГОРИЙ,И ТОТ ID КОТОРЫЙ ПРИНЯЛИ ПЕРЕДАЛИ В FILTERSLISE)
     dispatch(setCategoryId(id));
+  };
+
+  const onChangeSort = (i) => {
+    dispatch(setSort(i));
   };
 
   React.useEffect(() => {
@@ -36,7 +37,7 @@ export const Home = () => {
     fetch(
       `https://666c15f449dbc5d7145c8874.mockapi.io/items?page=${currentPage}&limit=4&${
         categoryId > 0 ? `category=${categoryId}` : ""
-      }&sortBy=${sort.sort}&order=desc${
+      }&sortBy=${sortType}&order=desc${
         searchValue ? `&title=${searchValue}` : ""
       }`
     )
@@ -62,7 +63,7 @@ export const Home = () => {
       });
 
     window.scrollTo(0, 0); // делает скрол вверх после рендера
-  }, [categoryId, sort, searchValue, currentPage]); // зависимости, которые вызывают повторный запрос при изменении
+  }, [categoryId, sortType, searchValue, currentPage]); // зависимости, которые вызывают повторный запрос при изменении
 
   const pizzas = Array.isArray(items)
     ? items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)
@@ -73,7 +74,7 @@ export const Home = () => {
       <div className="content__top">
         <Categories value={categoryId} onClickCategory={onClickCategory} />{" "}
         {/* для изменения категорий */}
-        <Sort sortValue={sort} onChangeSort={(i) => setSort(i)} />
+        <Sort sortValue={sortType} onChangeSort={onChangeSort} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">
