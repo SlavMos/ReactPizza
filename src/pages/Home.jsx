@@ -46,7 +46,7 @@ export const Home = () => {
         // вытаскиваем ответ от сервера
 
         setItems(res.data);
-        setIsLoading(false);
+        setIsLoading(false); // чтобы скелетон закрылся
       });
 
     //   fetch(
