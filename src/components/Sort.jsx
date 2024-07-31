@@ -14,10 +14,11 @@ const Sort = (props) => {
     { name: "Популярности ASC", sort: "-rating" },
   ]; // for popup List(click)
   // const sortName = popupList[props.sortValue].name; // после выбора попап листа остается то значение которое выбрали
-  const onClickItem = (i) => {
-    props.onChangeSort(i);
+  const onClickItem = (obj) => {
+    props.onChangeSort(obj);
     setOpen(false); // закрывает попап после выбора
   };
+
   return (
     <div className="sort">
       <div className="sort__label">

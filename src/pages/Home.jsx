@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import Categories from "../components/Categories";
@@ -26,41 +27,55 @@ export const Home = () => {
     dispatch(setCategoryId(id));
   };
 
-  const onChangeSort = (i) => {
-    dispatch(setSort(i));
+  const onChangeSort = (obj) => {
+    dispatch(setSort(obj));
   };
 
   React.useEffect(() => {
     setIsLoading(true); // чтобы при переключении категорий появился скелетон
     setErrorMessage(""); // сбросить сообщение об ошибке
-
-    fetch(
-      `https://666c15f449dbc5d7145c8874.mockapi.io/items?page=${currentPage}&limit=4&${
-        categoryId > 0 ? `category=${categoryId}` : ""
-      }&sortBy=${sortType}&order=desc${
-        searchValue ? `&title=${searchValue}` : ""
-      }`
-    )
+    axios
+      .get(
+        `https://666c15f449dbc5d7145c8874.mockapi.io/items?page=${currentPage}&limit=4&${
+          categoryId > 0 ? `category=${categoryId}` : ""
+        }&sortBy=${sortType.sort}&order=desc${
+          searchValue ? `&title=${searchValue}` : ""
+        }`
+      )
       .then((res) => {
-        if (!res.ok) {
-          //ПРОВЕРКА ДАННЫХ ДЛЯ ВЫВОДА ОШИБКИ
-          throw new Error("Ошибка сети");
-        }
-        return res.json();
-      })
-      .then((json) => {
-        if (Array.isArray(json) && json.length > 0) {
-          setItems(json); // если данные есть, устанавливаем их
-        } else {
-          setItems([]); // если данных нет, устанавливаем пустой массив
-          setErrorMessage("Пицца не найдена."); // показываем сообщение об отсутствии данных
-        }
-        setIsLoading(false); //когда массив пицц показался убираем скелетон
-      })
-      .catch((error) => {
-        setErrorMessage("Произошла ошибка при загрузке данных."); // показываем сообщение об ошибке
-        setIsLoading(false); // скрываем скелетон
+        // вытаскиваем ответ от сервера
+
+        setItems(res.data);
+        setIsLoading(false);
       });
+
+    //   fetch(
+    //     `https://666c15f449dbc5d7145c8874.mockapi.io/items?page=${currentPage}&limit=4&${
+    //       categoryId > 0 ? `category=${categoryId}` : ""
+    //     }&sortBy=${sortType.sort}&order=desc${
+    //       searchValue ? `&title=${searchValue}` : ""
+    //     }`
+    //   )
+    //     .then((res) => {
+    //       if (!res.ok) {
+    //         //ПРОВЕРКА ДАННЫХ ДЛЯ ВЫВОДА ОШИБКИ
+    //         throw new Error("Ошибка сети");
+    //       }
+    //       return res.json();
+    //     })
+    //     .then((json) => {
+    //       if (Array.isArray(json) && json.length > 0) {
+    //         setItems(json); // если данные есть, устанавливаем их
+    //       } else {
+    //         setItems([]); // если данных нет, устанавливаем пустой массив
+    //         setErrorMessage("Пицца не найдена."); // показываем сообщение об отсутствии данных
+    //       }
+    //       setIsLoading(false); //когда массив пицц показался убираем скелетон
+    //     })
+    //     .catch((error) => {
+    //       setErrorMessage("Произошла ошибка при загрузке данных."); // показываем сообщение об ошибке
+    //       setIsLoading(false); // скрываем скелетон
+    //     });
 
     window.scrollTo(0, 0); // делает скрол вверх после рендера
   }, [categoryId, sortType, searchValue, currentPage]); // зависимости, которые вызывают повторный запрос при изменении
