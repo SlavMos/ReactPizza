@@ -7,18 +7,23 @@ import Sort from "../components/Sort";
 import Pagination from "../components/Pagination/Pagination";
 import { SearchContext } from "../App";
 import { useSelector, useDispatch } from "react-redux";
-import { setCategoryId, setSort } from "../redux/slices/filterSlice";
+import {
+  setCategoryId,
+  setSort,
+  setCurrentPage,
+} from "../redux/slices/filterSlice";
 
 export const Home = () => {
   const categoryId = useSelector((state) => state.filter.categoryId); // берем из данных то что нам надо
   const sortType = useSelector((state) => state.filter.sort);
+  const currentPage = useSelector((state) => state.filter.currentPage);
   const dispatch = useDispatch();
 
   const { searchValue } = React.useContext(SearchContext);
   const [items, setItems] = React.useState([]); // для fetch запроса
   const [isLoading, setIsLoading] = React.useState(true); // for skeleton
   // const [category, setCategory] = React.useState(0); // чтобы фильтровать по категориям
-  const [currentPage, setCurrentPage] = React.useState(1); // для погинации(1.2.3) // чтобы сортировать по категориям
+  //const [currentPage, setCurrentPage] = React.useState(1); // для погинации(1.2.3) // чтобы сортировать по категориям
   const [errorMessage, setErrorMessage] = React.useState(""); // для сообщений об ошибках
 
   //DISPATCHIM TUT =)
@@ -29,6 +34,9 @@ export const Home = () => {
 
   const onChangeSort = (obj) => {
     dispatch(setSort(obj));
+  };
+  const onChangePagination = (obj) => {
+    dispatch(setCurrentPage(obj));
   };
 
   React.useEffect(() => {
@@ -55,34 +63,6 @@ export const Home = () => {
         setErrorMessage("Пицца не найдена"); // установка сообщения об ошибке
       });
 
-    //   fetch(
-    //     `https://666c15f449dbc5d7145c8874.mockapi.io/items?page=${currentPage}&limit=4&${
-    //       categoryId > 0 ? `category=${categoryId}` : ""
-    //     }&sortBy=${sortType.sort}&order=desc${
-    //       searchValue ? `&title=${searchValue}` : ""
-    //     }`
-    //   )
-    //     .then((res) => {
-    //       if (!res.ok) {
-    //         //ПРОВЕРКА ДАННЫХ ДЛЯ ВЫВОДА ОШИБКИ
-    //         throw new Error("Ошибка сети");
-    //       }
-    //       return res.json();
-    //     })
-    //     .then((json) => {
-    //       if (Array.isArray(json) && json.length > 0) {
-    //         setItems(json); // если данные есть, устанавливаем их
-    //       } else {
-    //         setItems([]); // если данных нет, устанавливаем пустой массив
-    //         setErrorMessage("Пицца не найдена."); // показываем сообщение об отсутствии данных
-    //       }
-    //       setIsLoading(false); //когда массив пицц показался убираем скелетон
-    //     })
-    //     .catch((error) => {
-    //       setErrorMessage("Произошла ошибка при загрузке данных."); // показываем сообщение об ошибке
-    //       setIsLoading(false); // скрываем скелетон
-    //     });
-
     window.scrollTo(0, 0); // делает скрол вверх после рендера
   }, [categoryId, sortType, searchValue, currentPage]); // зависимости, которые вызывают повторный запрос при изменении
 
@@ -107,7 +87,7 @@ export const Home = () => {
           pizzas
         )}
       </div>
-      <Pagination setCurrentPage={(number) => setCurrentPage(number)} />
+      <Pagination setCurrentPage={onChangePagination} />
     </>
   );
 };

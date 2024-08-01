@@ -5,19 +5,20 @@ import debounce from "lodash.debounce";
 
 export const Search = () => {
   const [value, setValue] = React.useState(""); // Используем useState для локального состояния
-  const { searchValue, setSearchValue } = React.useContext(SearchContext); // Используем useContext для получения контекста
+  const { setSearchValue } = React.useContext(SearchContext); // Используем useContext для получения контекста
 
   const inputRef = React.useRef(); // хук для получения доступа к DOM элементу
+
   const onClickClear = () => {
     setValue(""); // Обновляем локальное состояние
     setSearchValue(""); // Обновляем значение в контексте
     inputRef.current.focus(); // Фокус на инпут после очистки
   };
-
+  // что бы при поиске не было много запросов на бэк,запрос делается после одной секунды
   const updateSearchValue = React.useCallback(
     debounce((value) => {
       setSearchValue(value);
-    }, 1000),
+    }, 350),
     [setSearchValue] // Добавляем setSearchValue в зависимости
   );
 
