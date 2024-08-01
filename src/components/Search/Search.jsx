@@ -1,15 +1,31 @@
 import React, { useRef } from "react";
 import s from "./Search.module.scss";
 import { SearchContext } from "../../App";
+import debounce from "lodash.debounce";
 
-export const Search = (props) => {
-  const { searchValue, setSearchValue } = React.useContext(SearchContext);
+export const Search = () => {
+  const [value, setValue] = React.useState(""); // Используем useState для локального состояния
+  const { searchValue, setSearchValue } = React.useContext(SearchContext); // Используем useContext для получения контекста
 
-  const inputRef = useRef();
+  const inputRef = React.useRef(); // хук для получения доступа к DOM элементу
   const onClickClear = () => {
-    setSearchValue("");
-    inputRef.current.focus();
+    setValue(""); // Обновляем локальное состояние
+    setSearchValue(""); // Обновляем значение в контексте
+    inputRef.current.focus(); // Фокус на инпут после очистки
   };
+
+  const updateSearchValue = React.useCallback(
+    debounce((value) => {
+      setSearchValue(value);
+    }, 1000),
+    [setSearchValue] // Добавляем setSearchValue в зависимости
+  );
+
+  const onChangeInput = (event) => {
+    setValue(event.target.value); // Обновляем локальное состояние
+    updateSearchValue(event.target.value); // Вызываем debounce функцию для обновления значения в контексте
+  };
+
   return (
     <div className={s.search}>
       <svg
@@ -21,22 +37,22 @@ export const Search = (props) => {
         <path
           d="M14.9536 14.9458L21 21M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
           stroke="#000000"
-          width="2"
-          linecap="round"
-          linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
       <input
         ref={inputRef}
-        value={searchValue} // что бы инпут был отслеживаюший
-        onChange={(event) => setSearchValue(event.target.value)} // отслеживаю  event(то что юудет написано в инпут) и передаю в UseState
+        value={value} // Контролируемый компонент
+        onChange={onChangeInput} // Обработчик изменений
         className={s.input}
         type="text"
         placeholder="Search..."
       />
-      {searchValue && ( // if searchvalue===true ЕСЛИ В SEARCHVALUE ЧТО ТО БУДЕТ НАПИСАНО ТОГДА БУДЕТ ПОКАЗЫВАТЬ ИКОНКА CLEAR
+      {value && ( // Показываем иконку очистки, если есть значение
         <svg
-          onClick={onClickClear} //  при нажатим на иконко она очистивается
+          onClick={onClickClear} // Обработчик клика для очистки
           className={s.clear}
           version="1.1"
           id="Layer_1"
