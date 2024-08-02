@@ -2,6 +2,7 @@ import React from "react";
 
 const Sort = (props) => {
   const [open, setOpen] = React.useState(false);
+  const sortRef = React.useRef(); // для dom sorta
 
   const openClick = () => {
     setOpen(!open); // for open and close popup
@@ -19,8 +20,23 @@ const Sort = (props) => {
     setOpen(false); // закрывает попап после выбора
   };
 
+  React.useEffect(() => {
+    // закрываем попап при клике вне попапа
+    const handleClickOutside = (event) => {
+      const path = event.composedPath(); // Получаем путь события
+      if (!path.includes(sortRef.current)) {
+        setOpen(false);
+        console.log("oust");
+      }
+    };
+    document.body.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.body.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"

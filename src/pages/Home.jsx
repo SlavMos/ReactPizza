@@ -16,7 +16,7 @@ import {
 export const Home = () => {
   const categoryId = useSelector((state) => state.filter.categoryId); // берем из данных то что нам надо
   const sortType = useSelector((state) => state.filter.sort);
-  const currentPage = useSelector((state) => state.filter.currentPage);
+  const currentPage = useSelector((state) => state.filter.currentPage); // for pagination
   const dispatch = useDispatch();
 
   const { searchValue } = React.useContext(SearchContext);
