@@ -10,9 +10,7 @@ const Sort = (props) => {
   const popupList = [
     { name: "Популярности", sort: "rating" },
     { name: "Цене", sort: "price" },
-    { name: "Цене ASC", sort: "-price" },
     { name: "Алфавиту ", sort: "title" },
-    { name: "Популярности ASC", sort: "-rating" },
   ]; // for popup List(click)
   // const sortName = popupList[props.sortValue].name; // после выбора попап листа остается то значение которое выбрали
   const onClickItem = (obj) => {

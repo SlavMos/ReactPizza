@@ -2,12 +2,23 @@ import React from "react";
 import logoSvg from "./assets/img/image 1.svg";
 import { Link } from "react-router-dom";
 import Search from "./Search/Search";
+import { useSelector } from "react-redux";
+
 const Header = (props) => {
+  // Получаем массив items из состояния Redux
+  const items = useSelector((state) => state.card.items);
+
+  // Считаем общее количество всех items
+  const totalCount = items.reduce((sum, item) => sum + item.count, 0);
+
+  // Получаем общую цену из состояния Redux
+  const totalPrice = useSelector((state) => state.card.totalPrice);
+
   return (
     <div className="header">
       <div className="container">
         <Link to="/">
-          {/*при клике переходит на главную страницу */}
+          {/* Переход на главную страницу при клике на логотип */}
           <div className="header__logo">
             <img width="38" src={logoSvg} alt="Pizza" />
             <div>
@@ -16,12 +27,14 @@ const Header = (props) => {
             </div>
           </div>
         </Link>
-        {/* // ПОИСК */}
+        {/* Компонент для поиска */}
         <Search />
         <div className="header__cart">
           <Link to="/Card" className="button button--cart">
-            <span>520 ₽</span>
+            {/* Общая цена всех товаров */}
+            <span>{totalPrice} ₽</span>
             <div className="button__delimiter"></div>
+            {/* Иконка корзины */}
             <svg
               width="18"
               height="18"
@@ -51,7 +64,8 @@ const Header = (props) => {
                 strokeLinejoin="round"
               />
             </svg>
-            <span>3</span>
+            {/* Общее количество всех items */}
+            <span>{totalCount}</span>
           </Link>
         </div>
       </div>

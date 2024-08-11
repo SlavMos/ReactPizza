@@ -1,14 +1,36 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem } from "../../redux/slices/cardSlice";
 
-const PizzaBlock = ({ title, sizes, imageUrl, price, types }) => {
-  // const [pizzaCount, setPizzaCount] = React.useState(0); //[СОСТОЯНИЕ,ФУНКЦИЯ КОТОРАЯ БУДЕТ МЕНЯТЬ ЗНАЧЕНИЕ]
-
-  // const OnClickPlus = () => {
-  //   setPizzaCount(pizzaCount + 1);
-  // };
-
+const PizzaBlock = ({ id, title, sizes, imageUrl, price, types }) => {
   const [activeType, setActiveType] = React.useState(0);
   const [activeSize, setActiveSize] = React.useState(0);
+  const typesNames = ["традиционное", "тонкое"];
+
+  // Используем useSelector, чтобы найти конкретный элемент в корзине по id
+  const cartItem = useSelector((state) =>
+    state.card.items.find((obj) => obj.id === id)
+  );
+
+  // Если cartItem существует, то добавляем количество, иначе показываем "0"
+  const addedCount = cartItem ? cartItem.count : "0";
+
+  const dispatch = useDispatch();
+
+  // Функция для добавления пиццы в корзину
+  const onAddClick = () => {
+    const item = {
+      id,
+      title,
+      price,
+      imageUrl,
+      type: types[activeType], // Тип пиццы (например, тонкое или традиционное тесто)
+      size: sizes[activeSize], // Размер пиццы
+    };
+
+    console.log("Item being added:", item); // Проверяем, что выводится в консоли
+    dispatch(addItem(item)); // Добавляем элемент в корзину через Redux action
+  };
 
   return (
     <div className="pizza-block-wrapper">
@@ -17,31 +39,34 @@ const PizzaBlock = ({ title, sizes, imageUrl, price, types }) => {
         <h4 className="pizza-block__title">{title}</h4>
         <div className="pizza-block__selector">
           <ul>
-            {types.map((types, index) => (
+            {types.map((type, index) => (
               <li
-                key={types}
-                onClick={() => setActiveType(index)}
+                key={index}
+                onClick={() => setActiveType(index)} // Устанавливаем активный тип при клике
                 className={activeType === index ? "active" : ""}
               >
-                {types === 0 ? "тонкое" : "традиционное"}
+                {typesNames[index]} {/* Отображаем тип теста */}
               </li>
             ))}
           </ul>
           <ul>
-            {sizes.map((obj, index) => (
+            {sizes.map((size, index) => (
               <li
-                key={obj}
-                onClick={() => setActiveSize(index)}
+                key={index}
+                onClick={() => setActiveSize(index)} // Устанавливаем активный размер при клике
                 className={activeSize === index ? "active" : ""}
               >
-                {obj} см.
+                {size} см. {/* Отображаем размер пиццы */}
               </li>
             ))}
           </ul>
         </div>
         <div className="pizza-block__bottom">
           <div className="pizza-block__price"> от {price} руб</div>
-          <button className="button button--outline button--add">
+          <button
+            onClick={onAddClick} // Добавляем пиццу в корзину при клике
+            className="button button--outline button--add"
+          >
             <svg
               width="12"
               height="12"
@@ -55,11 +80,13 @@ const PizzaBlock = ({ title, sizes, imageUrl, price, types }) => {
               />
             </svg>
             <span>Добавить</span>
-            <i>0</i>
+            {addedCount > 0 && <i>{addedCount}</i>}{" "}
+            {/* Отображаем количество добавленных пицц */}
           </button>
         </div>
       </div>
     </div>
   );
 };
+
 export default PizzaBlock;
