@@ -12,16 +12,19 @@ import {
   setSort,
   setCurrentPage,
 } from "../redux/slices/filterSlice";
+import { fetchPizzas } from "../redux/slices/PizzasSlice";
 
 export const Home = () => {
   const categoryId = useSelector((state) => state.filter.categoryId); // берем из данных то что нам надо
   const sortType = useSelector((state) => state.filter.sort);
   const currentPage = useSelector((state) => state.filter.currentPage); // for pagination
+  const items = useSelector((state) => state.pizza.items);
+  const status = useSelector((state) => state.pizza.status);
   const dispatch = useDispatch();
 
   const { searchValue } = React.useContext(SearchContext);
-  const [items, setItems] = React.useState([]); // для fetch запроса
-  const [isLoading, setIsLoading] = React.useState(true); // for skeleton
+
+  //const [isLoading, setIsLoading] = React.useState(true); // for skeleton
   // const [category, setCategory] = React.useState(0); // чтобы фильтровать по категориям
   //const [currentPage, setCurrentPage] = React.useState(1); // для погинации(1.2.3) // чтобы сортировать по категориям
   const [errorMessage, setErrorMessage] = React.useState(""); // для сообщений об ошибках
@@ -39,54 +42,56 @@ export const Home = () => {
     dispatch(setCurrentPage(obj));
   };
 
-  React.useEffect(() => {
-    setIsLoading(true); // чтобы при переключении категорий появился скелетон
-    setErrorMessage(""); // сбросить сообщение об ошибке
-    axios
-      .get(
-        `https://666c15f449dbc5d7145c8874.mockapi.io/items?page=${currentPage}&limit=4&${
-          categoryId > 0 ? `category=${categoryId}` : ""
-        }&sortBy=${sortType.sort}&order=desc${
-          searchValue ? `&title=${searchValue}` : ""
-        }`
-      )
-      .then((res) => {
-        // вытаскиваем ответ от сервера
-        setItems(res.data);
-        setIsLoading(false); // чтобы скелетон закрылся
+  const getPizzas = async () => {
+    dispatch(
+      fetchPizzas({
+        currentPage,
+        sortType,
+        categoryId,
+        searchValue,
       })
-      .catch((error) => {
-        // обработка ошибки
-        console.error("Произошла ошибка при запросе данных:", error);
-        setIsLoading(false); // чтобы скелетон закрылся даже в случае ошибки
-        // можно также показать сообщение пользователю
-        setErrorMessage("Пицца не найдена"); // установка сообщения об ошибке
-      });
+    );
 
     window.scrollTo(0, 0); // делает скрол вверх после рендера
-  }, [categoryId, sortType, searchValue, currentPage]); // зависимости, которые вызывают повторный запрос при изменении
+  };
 
+  React.useEffect(() => {
+    getPizzas(); // вызов функции при изменении зависимостей
+  }, [categoryId, sortType, searchValue, currentPage]);
+
+  // Проверяем, является ли items массивом. Если да, то создаем массив компонентов PizzaBlock
+  // Для каждого объекта obj из массива items передаем его свойства (через spread оператор ...obj)
+  // В качестве ключа (key) используем уникальный id пиццы.
   const pizzas = Array.isArray(items)
     ? items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)
-    : [];
+    : []; // Если items не массив, pizzas будет пустым массивом.
 
   return (
     <>
       <div className="content__top">
-        <Categories value={categoryId} onClickCategory={onClickCategory} />{" "}
-        {/* для изменения категорий */}
+        {/* Компонент Categories отвечает за выбор категорий пицц */}
+        <Categories value={categoryId} onClickCategory={onClickCategory} />
+        {/* Компонент Sort отвечает за выбор параметра сортировки */}
         <Sort sortValue={sortType} onChangeSort={onChangeSort} />
       </div>
+
+      {/* Заголовок раздела с пиццами */}
       <h2 className="content__title">Все пиццы</h2>
+
       <div className="content__items">
-        {isLoading ? (
-          [...new Array(8)].map((_, index) => <Skeleton key={index} />) // отображаем скелетоны
+        {/* Если данные загружаются, отображаем массив скелетонов для визуальной загрузки */}
+        {status === "Loading" ? (
+          [...new Array(8)].map((_, index) => <Skeleton key={index} />) // Создаем 8 скелетонов с уникальными ключами
         ) : errorMessage ? (
+          // Если произошла ошибка при загрузке данных, отображаем сообщение об ошибке
           <div className="error__message">{errorMessage}</div>
         ) : (
+          // Если данные загружены успешно, отображаем пиццы
           pizzas
         )}
       </div>
+
+      {/* Компонент Pagination отвечает за пагинацию страниц с пиццами */}
       <Pagination setCurrentPage={onChangePagination} />
     </>
   );

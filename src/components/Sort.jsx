@@ -1,40 +1,50 @@
 import React from "react";
 
 const Sort = (props) => {
-  const [open, setOpen] = React.useState(false);
-  const sortRef = React.useRef(); // для dom sorta
+  const [open, setOpen] = React.useState(false); // Состояние для управления открытием и закрытием попапа
+  const sortRef = React.useRef(); // Реф для получения ссылки на DOM элемент (блок сортировки)
 
   const openClick = () => {
-    setOpen(!open); // for open and close popup
+    setOpen(!open); // Переключение состояния открытия попапа при клике на сортировку
   };
+
   const popupList = [
     { name: "Популярности", sort: "rating" },
     { name: "Цене", sort: "price" },
-    { name: "Алфавиту ", sort: "title" },
-  ]; // for popup List(click)
-  // const sortName = popupList[props.sortValue].name; // после выбора попап листа остается то значение которое выбрали
+    { name: "Алфавиту", sort: "title" },
+  ]; // Массив с опциями сортировки для отображения в попапе
+
+  // const sortName = popupList[props.sortValue].name;
+  // Комментировано: Используется для отображения имени выбранного элемента из попапа
+
   const onClickItem = (obj) => {
-    props.onChangeSort(obj);
-    setOpen(false); // закрывает попап после выбора
+    props.onChangeSort(obj); // Вызываем функцию изменения сортировки, передавая выбранный объект
+    setOpen(false); // Закрываем попап после выбора опции
   };
 
   React.useEffect(() => {
-    // закрываем попап при клике вне попапа
+    // Функция для закрытия попапа при клике вне его области
     const handleClickOutside = (event) => {
-      const path = event.composedPath(); // Получаем путь события
+      const path = event.composedPath(); // Получаем путь клика
       if (!path.includes(sortRef.current)) {
-        setOpen(false);
-        console.log("oust");
+        setOpen(false); // Закрываем попап если клик был вне него
+        console.log("oust"); // Лог для проверки
       }
     };
+
+    // Добавляем обработчик клика по всему документу
     document.body.addEventListener("click", handleClickOutside);
 
+    // Удаляем обработчик клика при размонтировании компонента
     return () => {
       document.body.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
   return (
     <div ref={sortRef} className="sort">
+      {" "}
+      {/* Привязываем реф к блоку сортировки */}
       <div className="sort__label">
         <svg
           width="10"
@@ -49,20 +59,21 @@ const Sort = (props) => {
           />
         </svg>
         <b>Сортировка по:</b>
+        {/* Отображаем выбранное значение сортировки */}
         <span onClick={openClick}>{props.sortValue.name}</span>
       </div>
-      {open && ( // if open true ->{div}
+      {open && ( // Если состояние open true, отображаем попап
         <div className="sort__popup">
           <ul>
             {popupList.map((obj, index) => (
               <li
                 key={index}
-                className={props.sortValue.sort === obj.sort ? "active" : ""} //переключение по попапу
+                className={props.sortValue.sort === obj.sort ? "active" : ""} // Подсвечиваем активный элемент
                 onClick={() => {
-                  onClickItem(obj);
+                  onClickItem(obj); // При клике на элемент вызываем функцию выбора
                 }}
               >
-                {obj.name}
+                {obj.name} {/* Отображаем название опции сортировки */}
               </li>
             ))}
           </ul>
