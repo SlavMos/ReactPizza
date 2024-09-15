@@ -38,7 +38,7 @@ const cardSlice = createSlice({
     minusItem(state, action) {
       const findItem = state.items.find((obj) => obj.id === action.payload.id);
       if (findItem) {
-        // Если элемент найден, увеличить его количество
+        // Если элемент найден, увеличить его количество(уменьшение)
         findItem.count--;
       }
     },

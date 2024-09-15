@@ -1,48 +1,50 @@
 import React from "react";
-import axios from "axios";
 import PizzaBlock from "../components/PizzaBlock";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import Categories from "../components/Categories";
 import Sort from "../components/Sort";
 import Pagination from "../components/Pagination/Pagination";
-import { SearchContext } from "../App";
+import { SearchContext } from "../App"; // для работы с поиском
 import { useSelector, useDispatch } from "react-redux";
 import {
   setCategoryId,
   setSort,
   setCurrentPage,
-} from "../redux/slices/filterSlice";
-import { fetchPizzas } from "../redux/slices/PizzasSlice";
+} from "../redux/slices/filterSlice"; // экшены для фильтрации, сортировки и пагинации
+import { fetchPizzas } from "../redux/slices/PizzasSlice"; // асинхронный экшен для получения данных пицц
+import { Link } from "react-router-dom";
 
 export const Home = () => {
-  const categoryId = useSelector((state) => state.filter.categoryId); // берем из данных то что нам надо
+  // Достаем нужные данные из стейта Redux (выбранная категория, тип сортировки, текущая страница, пиццы и статус)
+  const categoryId = useSelector((state) => state.filter.categoryId);
   const sortType = useSelector((state) => state.filter.sort);
-  const currentPage = useSelector((state) => state.filter.currentPage); // for pagination
+  const currentPage = useSelector((state) => state.filter.currentPage);
   const items = useSelector((state) => state.pizza.items);
   const status = useSelector((state) => state.pizza.status);
-  const dispatch = useDispatch();
 
+  const dispatch = useDispatch(); // хук для диспатча экшенов
+
+  // Достаем значение из контекста поиска (например, для фильтрации по названию)
   const { searchValue } = React.useContext(SearchContext);
 
-  //const [isLoading, setIsLoading] = React.useState(true); // for skeleton
-  // const [category, setCategory] = React.useState(0); // чтобы фильтровать по категориям
-  //const [currentPage, setCurrentPage] = React.useState(1); // для погинации(1.2.3) // чтобы сортировать по категориям
-  const [errorMessage, setErrorMessage] = React.useState(""); // для сообщений об ошибках
-
-  //DISPATCHIM TUT =)
+  // Функция для смены категории (диспатчим экшен `setCategoryId`)
   const onClickCategory = (id) => {
-    //СОЗДАЛИ ФУНКЦИЮ КОТОРАЯ ПРИНИМАЕТ IDCATEGORY(ПЕРЕДАЛИ КОМПОНЕНТУ КАТЕГОРИЙ,И ТОТ ID КОТОРЫЙ ПРИНЯЛИ ПЕРЕДАЛИ В FILTERSLISE)
     dispatch(setCategoryId(id));
   };
 
+  // Функция для смены сортировки (диспатчим экшен `setSort`)
   const onChangeSort = (obj) => {
     dispatch(setSort(obj));
   };
+
+  // Функция для изменения текущей страницы (диспатчим экшен `setCurrentPage`)
   const onChangePagination = (obj) => {
     dispatch(setCurrentPage(obj));
   };
 
+  // Функция для получения пицц (асинхронный запрос через Redux Thunk)
   const getPizzas = async () => {
+    // Диспатчим экшен `fetchPizzas`, передаем необходимые параметры
     dispatch(
       fetchPizzas({
         currentPage,
@@ -52,46 +54,48 @@ export const Home = () => {
       })
     );
 
-    window.scrollTo(0, 0); // делает скрол вверх после рендера
+    // Скроллим страницу вверх после рендера пицц
+    window.scrollTo(0, 0);
   };
 
+  // `useEffect` срабатывает при изменении зависимостей (категория, сортировка, поисковое значение, текущая страница)
   React.useEffect(() => {
-    getPizzas(); // вызов функции при изменении зависимостей
+    getPizzas();
   }, [categoryId, sortType, searchValue, currentPage]);
 
-  // Проверяем, является ли items массивом. Если да, то создаем массив компонентов PizzaBlock
-  // Для каждого объекта obj из массива items передаем его свойства (через spread оператор ...obj)
-  // В качестве ключа (key) используем уникальный id пиццы.
+  // Проверяем, является ли `items` массивом. Если да, создаем массив компонентов `PizzaBlock`
+  // Для каждого объекта передаем его свойства через спред оператор
   const pizzas = Array.isArray(items)
-    ? items.map((obj) => <PizzaBlock key={obj.id} {...obj} />)
-    : []; // Если items не массив, pizzas будет пустым массивом.
+    ? items.map((obj) => (
+        <Link key={obj.id} to={`pizza/${obj.id}`}>
+          <PizzaBlock {...obj} />
+        </Link>
+      ))
+    : [];
 
   return (
     <>
       <div className="content__top">
-        {/* Компонент Categories отвечает за выбор категорий пицц */}
+        {/* Компонент Categories отвечает за выбор категорий */}
         <Categories value={categoryId} onClickCategory={onClickCategory} />
-        {/* Компонент Sort отвечает за выбор параметра сортировки */}
+        {/* Компонент Sort отвечает за выбор сортировки */}
         <Sort sortValue={sortType} onChangeSort={onChangeSort} />
       </div>
 
-      {/* Заголовок раздела с пиццами */}
       <h2 className="content__title">Все пиццы</h2>
 
       <div className="content__items">
-        {/* Если данные загружаются, отображаем массив скелетонов для визуальной загрузки */}
-        {status === "Loading" ? (
-          [...new Array(8)].map((_, index) => <Skeleton key={index} />) // Создаем 8 скелетонов с уникальными ключами
-        ) : errorMessage ? (
-          // Если произошла ошибка при загрузке данных, отображаем сообщение об ошибке
-          <div className="error__message">{errorMessage}</div>
+        {/* Отображаем скелетоны, сообщение об ошибке или пиццы в зависимости от статуса */}
+        {status === "loading" ? (
+          [...new Array(8)].map((_, index) => <Skeleton key={index} />)
+        ) : status === "error" ? (
+          <div className="error__message"> Ничего не найдено!</div>
         ) : (
-          // Если данные загружены успешно, отображаем пиццы
           pizzas
         )}
       </div>
 
-      {/* Компонент Pagination отвечает за пагинацию страниц с пиццами */}
+      {/* Компонент Pagination для пагинации */}
       <Pagination setCurrentPage={onChangePagination} />
     </>
   );
